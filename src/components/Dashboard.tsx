@@ -101,7 +101,13 @@ export function DashboardClient({
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.message ?? err.error ?? "Assignment failed");
+        const reasons =
+          Array.isArray(err.reasons) && err.reasons.length > 0
+            ? `: ${err.reasons.join(" ")}`
+            : "";
+        throw new Error(
+          `${err.message ?? err.error ?? "Assignment failed"}${reasons}`
+        );
       }
 
       setLoads((prev) =>

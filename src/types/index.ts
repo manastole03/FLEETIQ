@@ -29,6 +29,10 @@ export interface DriverWithScore {
   complianceReason: string | null;
   reasoning: string;
   recommendation: "assign" | "marginal" | "skip";
+  eligibleForDispatch?: boolean;
+  dispatchBlockReasons?: string[];
+  requiredHosHours?: number;
+  recommendationRank?: number;
 }
 
 export interface LoadWithAssignment {

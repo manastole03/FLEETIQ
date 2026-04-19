@@ -66,6 +66,10 @@ interface ScoredDriver extends Driver {
   complianceReason: string | null;
   reasoning: string;
   recommendation: "assign" | "marginal" | "skip";
+  eligibleForDispatch?: boolean;
+  dispatchBlockReasons?: string[];
+  requiredHosHours?: number;
+  recommendationRank?: number;
 }
 
 interface SmartDispatchProps {
@@ -152,12 +156,13 @@ export function SmartDispatch({
     }
   }, [fetchScores, selectedLoad?.status, selectedLoadId]);
 
-  const qualifiedDrivers = scoredDrivers.filter(
-    (driver) =>
-      driver.status === "AVAILABLE" &&
-      driver.complianceStatus !== "critical" &&
-      driver.recommendation !== "skip"
-  );
+  const qualifiedDrivers = scoredDrivers.filter((driver) => {
+    if (driver.status !== "AVAILABLE") return false;
+    if (typeof driver.eligibleForDispatch === "boolean") {
+      return driver.eligibleForDispatch;
+    }
+    return driver.complianceStatus !== "critical" && driver.recommendation !== "skip";
+  });
   const blockedDrivers = scoredDrivers.filter(
     (driver) => !qualifiedDrivers.some((item) => item.id === driver.id)
   );
@@ -661,8 +666,15 @@ function BlockedDrivers({ blockedDrivers }: { blockedDrivers: ScoredDriver[] }) 
                 </Badge>
               </div>
               <p className="mt-2 text-xs leading-5 text-[#8ea198]">
-                {driver.complianceReason ?? "Driver is not available for dispatch right now."}
+                {driver.dispatchBlockReasons?.[0] ??
+                  driver.complianceReason ??
+                  "Driver is not available for dispatch right now."}
               </p>
+              {driver.dispatchBlockReasons && driver.dispatchBlockReasons.length > 1 ? (
+                <p className="mt-2 text-[11px] leading-5 text-[#64776e]">
+                  +{driver.dispatchBlockReasons.length - 1} more guardrail reason(s)
+                </p>
+              ) : null}
             </div>
           ))
         )}

@@ -51,6 +51,12 @@ export interface DriverScore {
   recommendation: "assign" | "marginal" | "skip";
 }
 
+export interface DispatchEligibilityResult {
+  eligible: boolean;
+  reasons: string[];
+  requiredHosHours: number;
+}
+
 export interface CostAnalysis {
   revenue: number;
   fuelCost: number;
@@ -257,6 +263,42 @@ Return JSON only: { "verdict": "accept"|"marginal"|"reject", "reasoning": "..." 
     marginPercent: Math.round(marginPercent * 10) / 10,
     verdict,
     reasoning,
+  };
+}
+
+export function evaluateDispatchEligibility(input: {
+  hosRemaining: number;
+  deadMiles: number;
+  estimatedHours: number;
+  score: DriverScore;
+}): DispatchEligibilityResult {
+  const reasons: string[] = [];
+  const requiredHosHours = Number((input.estimatedHours + 1.5).toFixed(1));
+
+  if (input.hosRemaining < requiredHosHours) {
+    reasons.push(
+      `Insufficient HOS (${input.hosRemaining}h available vs ${requiredHosHours}h required).`
+    );
+  }
+
+  if (input.score.complianceStatus === "critical") {
+    reasons.push(
+      input.score.complianceReason || "Critical compliance flag on this match."
+    );
+  }
+
+  if (input.deadMiles > 220) {
+    reasons.push(`Deadhead too high (${input.deadMiles} miles to pickup).`);
+  }
+
+  if (input.score.recommendation === "skip" || input.score.score < 45) {
+    reasons.push("AI recommendation is below assignable threshold.");
+  }
+
+  return {
+    eligible: reasons.length === 0,
+    reasons,
+    requiredHosHours,
   };
 }
 

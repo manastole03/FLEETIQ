@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { haversineDistance } from "@/lib/truckerpath";
-import { scoreDriverLoadPair } from "@/lib/grok";
+import { evaluateDispatchEligibility, scoreDriverLoadPair } from "@/lib/grok";
 import { calculateRoute } from "@/lib/truckerpath";
 
 export const dynamic = "force-dynamic";
@@ -76,6 +76,13 @@ export async function GET(req: NextRequest) {
           },
         });
 
+        const eligibility = evaluateDispatchEligibility({
+          hosRemaining: driver.hosRemaining,
+          deadMiles,
+          estimatedHours: route.estimated_hours,
+          score: scoreResult,
+        });
+
         return {
           id: driver.id,
           name: driver.name,
@@ -89,15 +96,31 @@ export async function GET(req: NextRequest) {
           totalTrips: driver.totalTrips,
           deadMiles,
           aiScore: scoreResult.score,
+          eligibleForDispatch: eligibility.eligible,
+          dispatchBlockReasons: eligibility.reasons,
+          requiredHosHours: eligibility.requiredHosHours,
           ...scoreResult,
         };
       })
     );
 
-    // Sort by AI score descending
-    scoredDrivers.sort((a, b) => b.aiScore - a.aiScore);
+    // Rank dispatch-eligible matches first, then by score and deadhead.
+    scoredDrivers.sort((a, b) => {
+      if (a.eligibleForDispatch !== b.eligibleForDispatch) {
+        return Number(b.eligibleForDispatch) - Number(a.eligibleForDispatch);
+      }
+      if (b.aiScore !== a.aiScore) {
+        return b.aiScore - a.aiScore;
+      }
+      return a.deadMiles - b.deadMiles;
+    });
 
-    return NextResponse.json({ drivers: scoredDrivers, load });
+    const rankedDrivers = scoredDrivers.map((driver, index) => ({
+      ...driver,
+      recommendationRank: index + 1,
+    }));
+
+    return NextResponse.json({ drivers: rankedDrivers, load });
   } catch (err) {
     console.error("[GET /api/drivers]", err);
     return NextResponse.json(
