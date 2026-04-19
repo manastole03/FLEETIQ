@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Driver {
+  id            String       @id @default(cuid())
+  name          String
+  phone         String
+  licenseNumber String       @unique
+  truckNumber   String       @unique
+
+  // Current status (synced from NavPro)
+  latitude      Float?
+  longitude     Float?
+  city          String?
+  state         String?
+  status        String @default("AVAILABLE")
+  hosRemaining  Float        @default(11) // hours
+  hosResetAt    DateTime?
+  fuelLevel     Float?       // percentage 0-100
+
+  // Truck profile for compliance checks
+  truckHeight   Float        @default(13.6)  // feet
+  truckWeight   Float        @default(80000) // lbs
+  truckLength   Float        @default(75)    // feet
+  hasHazmat     Boolean      @default(false)
+
+  // Performance
+  onTimeRate    Float        @default(0.90)
+  totalTrips    Int          @default(0)
+  totalMiles    Float        @default(0)
+
+  // Timestamps
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  lastPingAt    DateTime?
+
+  assignments   Assignment[]
+  alerts        Alert[]
+
+  @@index([status])
+  @@index([latitude, longitude])
+}
+
+model Load {
+  id              String      @id @default(cuid())
+  loadNumber      String      @unique
+  status          String  @default("PENDING")
+
+  // Route
+  originCity      String
+  originState     String
+  originLat       Float
+  originLng       Float
+  originAddress   String
+
+  destCity        String
+  destState       String
+  destLat         Float
+  destLng         Float
+  destAddress     String
+
+  // Financials
+  rate            Float
+  estimatedMiles  Float
+  commodity       String
+  weight          Float       @default(0)
+  shipper         String
+
+  // Dates
+  pickupDate      DateTime
+  deliveryDate    DateTime
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Documents
+  bolUrl          String?
+  podUrl          String?
+  rateConUrl      String?
+
+  assignments     Assignment[]
+  alerts          Alert[]
+
+  @@index([status])
+  @@index([pickupDate])
+}
+
+model Assignment {
+  id              String           @id @default(cuid())
+  driverId        String
+  loadId          String
+  status          String @default("PENDING")
+  assignedBy      String?
+
+  // AI scoring data (stored for audit)
+  aiScore         Float            @default(0)
+  aiReasoning     String?
+  aiSummary       String?
+
+  // Cost breakdown at assignment time
+  estimatedRevenue   Float         @default(0)
+  estimatedFuelCost  Float         @default(0)
+  estimatedDeadMiles Float         @default(0)
+  estimatedDeadCost  Float         @default(0)
+  estimatedDriverPay Float         @default(0)
+  estimatedTolls     Float         @default(0)
+  estimatedNetMargin Float         @default(0)
+  marginPercent      Float         @default(0)
+
+  // Request lifecycle
+  requestedAt      DateTime         @default(now())
+  respondedAt      DateTime?
+  expiresAt        DateTime?
+  declineReason    String?
+  reassignedFromId String?
+  smsSent          Boolean          @default(false)
+  webNotificationSent Boolean       @default(false)
+
+  // Actual (filled after trip)
+  actualFuelCost  Float?
+  actualMiles     Float?
+  actualHours     Float?
+  actualNetMargin Float?
+
+  assignedAt      DateTime         @default(now())
+  startedAt       DateTime?
+  completedAt     DateTime?
+
+  driver          Driver           @relation(fields: [driverId], references: [id])
+  load            Load             @relation(fields: [loadId], references: [id])
+  responses       DriverResponse[]
+
+  @@index([driverId])
+  @@index([loadId])
+  @@index([status])
+  @@index([requestedAt])
+}
+
+model Alert {
+  id          String      @id @default(cuid())
+  type        String
+  severity    String    @default("WARNING")
+  title       String
+  message     String
+  resolved    Boolean     @default(false)
+  resolvedAt  DateTime?
+
+  driverId    String?
+  loadId      String?
+  driver      Driver?     @relation(fields: [driverId], references: [id])
+  load        Load?       @relation(fields: [loadId], references: [id])
+
+  createdAt   DateTime    @default(now())
+
+  @@index([resolved])
+  @@index([driverId])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  title       String
+  message     String
+  channel     String   @default("web")
+  status      String   @default("UNREAD")
+  priority    String   @default("normal")
+  assignmentId String?
+  loadId      String?
+  driverId    String?
+  createdAt   DateTime @default(now())
+  readAt      DateTime?
+}
+
+model SmsLog {
+  id           String   @id @default(cuid())
+  toNumber     String
+  message      String
+  provider     String   @default("mock")
+  providerId   String?
+  status       String   @default("QUEUED")
+  assignmentId String?
+  eventType    String
+  error        String?
+  createdAt    DateTime @default(now())
+  sentAt       DateTime?
+}
+
+model DriverResponse {
+  id            String   @id @default(cuid())
+  assignmentId  String
+  driverId      String
+  response      String
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  assignment    Assignment @relation(fields: [assignmentId], references: [id])
+
+  @@index([assignmentId])
+  @@index([driverId])
+}
+
+
