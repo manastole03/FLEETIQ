@@ -1,0 +1,287 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #070908;
+  --panel: #0d1210;
+  --panel-2: #111a16;
+  --surface: #16211c;
+  --line: rgba(218, 255, 237, 0.12);
+  --muted: #8ea198;
+  --text: #f3fbf7;
+  --green: #26d69b;
+  --green-2: #10a875;
+  --cyan: #53d7ff;
+  --amber: #f4b84a;
+  --red: #ff5d6c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(38, 214, 155, 0.14), transparent 34%),
+    linear-gradient(180deg, #09100d 0%, #070908 45%, #050706 100%);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070908;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #26352f;
+  border-radius: 8px;
+}
+
+.mono {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.app-bg {
+  background:
+    linear-gradient(rgba(218, 255, 237, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(218, 255, 237, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 35% -10%, rgba(38, 214, 155, 0.16), transparent 28%),
+    #070908;
+  background-size: 34px 34px, 34px 34px, auto, auto;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(13, 18, 16, 0.92);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.panel-soft {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(17, 26, 22, 0.78);
+}
+
+.glass-panel {
+  border: 1px solid rgba(218, 255, 237, 0.16);
+  border-radius: 8px;
+  background: rgba(13, 18, 16, 0.62);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(18px);
+}
+
+.shell-shadow {
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.3);
+}
+
+.soft-grid {
+  background-image:
+    linear-gradient(rgba(218, 255, 237, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(218, 255, 237, 0.055) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.premium-card,
+.feature-card {
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.premium-card:hover,
+.feature-card:hover {
+  border-color: rgba(38, 214, 155, 0.42);
+  background: rgba(22, 33, 28, 0.92);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+  transform: translateY(-2px);
+}
+
+.score-fill {
+  transition: width 0.35s ease;
+}
+
+.cta-glow {
+  animation: cta-glow 2.2s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.25s ease-out;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.live-dot {
+  animation: pulse-dot 1.7s ease-in-out infinite;
+}
+
+@keyframes spin-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-ring {
+  animation: spin-ring 0.9s linear infinite;
+}
+
+@keyframes route-dash {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+.route-dash {
+  stroke-dasharray: 9 9;
+  animation: route-dash 1.2s linear infinite;
+}
+
+.truck-loader-stage {
+  position: relative;
+  width: min(430px, 86vw);
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loader-truck {
+  position: relative;
+  z-index: 2;
+  width: 74px;
+  height: 52px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--green-2);
+  box-shadow: 0 20px 55px rgba(38, 214, 155, 0.28);
+  animation: truck-drive 1.3s ease-in-out infinite;
+}
+
+.loader-road {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  margin-top: 24px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(218, 255, 237, 0.12);
+}
+
+.loader-road::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  width: 52%;
+  border-radius: 8px;
+  background: var(--green);
+  animation: road-progress 1.3s ease-in-out infinite;
+}
+
+.map-pulse {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  width: 170px;
+  height: 170px;
+  border: 1px solid rgba(38, 214, 155, 0.24);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  animation: map-pulse 1.6s ease-out infinite;
+}
+
+@keyframes cta-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(38, 214, 155, 0.18);
+  }
+  50% {
+    box-shadow: 0 16px 42px rgba(38, 214, 155, 0.28);
+  }
+}
+
+@keyframes truck-drive {
+  0%,
+  100% {
+    transform: translateX(-18px);
+  }
+  50% {
+    transform: translateX(18px);
+  }
+}
+
+@keyframes road-progress {
+  from {
+    transform: translateX(-105%);
+  }
+  to {
+    transform: translateX(205%);
+  }
+}
+
+@keyframes map-pulse {
+  0% {
+    opacity: 0.72;
+    transform: translateX(-50%) scale(0.72);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1.25);
+  }
+}
