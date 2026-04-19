@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Driver {
@@ -29,6 +29,10 @@ model Driver {
   truckWeight   Float        @default(80000) // lbs
   truckLength   Float        @default(75)    // feet
   hasHazmat     Boolean      @default(false)
+
+  // NavPro integration fields
+  email           String?
+  navproDriverId  Int?      // NavPro numeric driver_id from /api/driver/query
 
   // Performance
   onTimeRate    Float        @default(0.90)
