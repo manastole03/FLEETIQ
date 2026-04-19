@@ -1,0 +1,99 @@
+{
+  "drivers": [
+    {
+      "name": "Yadnesh yadnesh123",
+      "navpro_id": 719839,
+      "email": "ydeshpa4@asu.edu",
+      "status": "existing",
+      "truck": "SWE-101",
+      "load": "LOAD-4821"
+    }
+  ],
+  "vehicles": [
+    {
+      "truck_no": "SWE-101",
+      "navpro_id": null,
+      "make": "FREIGHTLINER",
+      "model": "Cascadia",
+      "year": "2022",
+      "assigned_driver": "marcus"
+    },
+    {
+      "truck_no": "SWE-102",
+      "navpro_id": null,
+      "make": "KENWORTH",
+      "model": "T680",
+      "year": "2021",
+      "assigned_driver": "elena"
+    },
+    {
+      "truck_no": "SWE-103",
+      "navpro_id": null,
+      "make": "PETERBILT",
+      "model": "579",
+      "year": "2023",
+      "assigned_driver": "james"
+    },
+    {
+      "truck_no": "SWE-104",
+      "navpro_id": null,
+      "make": "VOLVO",
+      "model": "VNL 860",
+      "year": "2022",
+      "assigned_driver": "sandra"
+    },
+    {
+      "truck_no": "SWE-105",
+      "navpro_id": null,
+      "make": "MACK",
+      "model": "Anthem",
+      "year": "2020",
+      "assigned_driver": "deon"
+    }
+  ],
+  "trips": [
+    {
+      "ref": "LOAD-4821",
+      "navpro_trip_id": null,
+      "driver": "marcus",
+      "driver_id": 719839,
+      "commodity": "General Merchandise",
+      "weight": 42000,
+      "rate": 2400,
+      "origin": "Phoenix Distribution Center, Phoenix AZ",
+      "destination": "Walmart DC #6010, Dallas TX"
+    }
+  ],
+  "eld_files": [
+    {
+      "file": "ELD_SWE-101_Webb_20260419.csv",
+      "driver": "Marcus Webb",
+      "navpro_doc_id": null,
+      "local_path": "/Users/prempagare/Desktop/claude/globe-hacks/Global Hacks/FLEETIQ/eld_output/ELD_SWE-101_Webb_20260419.csv"
+    },
+    {
+      "file": "ELD_SWE-102_Vasquez_20260419.csv",
+      "driver": "Elena Vasquez",
+      "navpro_doc_id": null,
+      "local_path": "/Users/prempagare/Desktop/claude/globe-hacks/Global Hacks/FLEETIQ/eld_output/ELD_SWE-102_Vasquez_20260419.csv"
+    },
+    {
+      "file": "ELD_SWE-103_Torres_20260419.csv",
+      "driver": "James Torres",
+      "navpro_doc_id": null,
+      "local_path": "/Users/prempagare/Desktop/claude/globe-hacks/Global Hacks/FLEETIQ/eld_output/ELD_SWE-103_Torres_20260419.csv"
+    },
+    {
+      "file": "ELD_SWE-104_Chen_20260419.csv",
+      "driver": "Sandra Chen",
+      "navpro_doc_id": null,
+      "local_path": "/Users/prempagare/Desktop/claude/globe-hacks/Global Hacks/FLEETIQ/eld_output/ELD_SWE-104_Chen_20260419.csv"
+    },
+    {
+      "file": "ELD_SWE-105_Harris_20260419.csv",
+      "driver": "Deon Harris",
+      "navpro_doc_id": null,
+      "local_path": "/Users/prempagare/Desktop/claude/globe-hacks/Global Hacks/FLEETIQ/eld_output/ELD_SWE-105_Harris_20260419.csv"
+    }
+  ]
+}
